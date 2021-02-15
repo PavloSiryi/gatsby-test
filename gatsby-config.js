@@ -29,19 +29,6 @@ module.exports = {
   plugins: [
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-emotion',
-    {
-      resolve: 'gatsby-source-prismic',
-      options: {
-        repositoryName: 'gatsby-starter-prismic',
-        accessToken: `${process.env.API_KEY}`,
-        // Get the correct URLs in blog posts
-        linkResolver: () => (post) => `/${post.uid}`,
-        // PrismJS highlighting for labels and slices
-        htmlSerializer: () => prismicHtmlSerializer,
-        // Remove this config option if you only have one language in your Prismic repository
-        lang: 'en-gb',
-      },
-    },
     'gatsby-plugin-lodash',
     'gatsby-transformer-sharp',
     'gatsby-plugin-sharp',
@@ -70,6 +57,24 @@ module.exports = {
         display: 'standalone',
         icon: website.favicon,
       },
+    },
+    {
+      resolve: 'gatsby-source-prismic-graphql',
+      options: {
+        repositoryName: 'gatsbyprismict', // required
+        accessToken: 'MC5ZQ3BOTHhJQUFDQUFZaEJR.77-9Y0bvv71L77-9aVQ777-9Em3vv73vv71ebVjvv70I77-977-977-977-9akw6Iu-_ve-_ve-_ve-_ve-_vQ', // optional
+        previews: false, // optional, default: false
+        pages: [{ // optional
+          type: 'List', // TypeName from prismic
+          match: '/list/:uid', // pages will be generated under this pattern
+          path: '/list',
+          component: require.resolve('./src/templates/list.js'),
+        }],
+        sharpKeys: [
+          /image|photo|picture/, // (default)
+          'profilepic',
+        ],
+      }
     },
     // Must be placed at the end
     'gatsby-plugin-offline',
