@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "gatsby";
 import { graphql } from "gatsby";
 
 const ListItem = (listsData) => {
@@ -14,7 +15,10 @@ const ListItem = (listsData) => {
   const currentListItem = edges[0].node;
 
   return (
-    <div>{currentListItem.header[0].text}</div>
+    <>
+      {currentListItem.header[0].text}
+      <div><Link to="/">Back</Link></div>
+    </>
   );
 };
 
@@ -28,7 +32,6 @@ export const query = graphql`
           node {
             header
             content
-            _linkType
           }
         }
       }

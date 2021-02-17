@@ -2,8 +2,6 @@ require('dotenv').config({
   path: `.env`,
 })
 
-const prismicHtmlSerializer = require('./src/gatsby/htmlSerializer')
-
 const website = require('./config/website')
 
 const pathPrefix = website.pathPrefix === '/' ? '' : website.pathPrefix
@@ -39,6 +37,24 @@ module.exports = {
       },
     },
     {
+      resolve: 'gatsby-source-prismic-graphql',
+      options: {
+        repositoryName: 'gatsbyprismict', // required
+        accessToken: 'MC5ZQ3BOTHhJQUFDQUFZaEJR.77-9Y0bvv71L77-9aVQ777-9Em3vv73vv71ebVjvv70I77-977-977-977-9akw6Iu-_ve-_ve-_ve-_ve-_vQ', // optional
+        previews: false, // optional, default: false
+        pages: [{ // optional
+          type: 'List', // TypeName from prismic
+          match: '/list/:uid', // pages will be generated under this pattern
+          path: '/list',
+          component: require.resolve('./src/templates/list.js'),
+        }],
+        sharpKeys: [
+          /image|photo|picture/, // (default)
+          'profilepic',
+        ],
+      }
+    },
+    {
       resolve: 'gatsby-plugin-google-analytics',
       options: {
         trackingId: website.googleAnalyticsID,
@@ -57,24 +73,6 @@ module.exports = {
         display: 'standalone',
         icon: website.favicon,
       },
-    },
-    {
-      resolve: 'gatsby-source-prismic-graphql',
-      options: {
-        repositoryName: 'gatsbyprismict', // required
-        accessToken: 'MC5ZQ3BOTHhJQUFDQUFZaEJR.77-9Y0bvv71L77-9aVQ777-9Em3vv73vv71ebVjvv70I77-977-977-977-9akw6Iu-_ve-_ve-_ve-_ve-_vQ', // optional
-        previews: false, // optional, default: false
-        pages: [{ // optional
-          type: 'List', // TypeName from prismic
-          match: '/list/:uid', // pages will be generated under this pattern
-          path: '/list',
-          component: require.resolve('./src/templates/list.js'),
-        }],
-        sharpKeys: [
-          /image|photo|picture/, // (default)
-          'profilepic',
-        ],
-      }
     },
     // Must be placed at the end
     'gatsby-plugin-offline',
