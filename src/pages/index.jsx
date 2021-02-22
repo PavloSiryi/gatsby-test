@@ -2,20 +2,23 @@ import React, { useRef, useState, useEffect } from "react";
 import { getCursorFromDocumentIndex } from 'gatsby-source-prismic-graphql';
 import { Link, graphql } from "gatsby";
 
-const Index = (listsData) => {
+const Index = (props) => {
   const limit = 4;
   const {
     data: {
-      prismic
+      prismic,
     }
-  } = listsData;
+  } = props;
   const didMountRef = useRef(false);
+  const [isLoading, setSiLoading] = React.useState(false);
   const [page, setPage] = React.useState(-1);
   const [data, setData] = React.useState(prismic);
-  const onPreviousClick = () => setPage(page - limit);
-  const onNextClick = () => setPage(page + limit);
 
-  console.log(prismic)
+  const onPaginationControlClick = (isNext) => () => {
+    setSiLoading(true);
+    const nextPage = isNext ? page + limit : page - limit;
+    setPage(nextPage);
+  };
 
   useEffect(() => {
     if (!didMountRef.current) {
@@ -23,24 +26,29 @@ const Index = (listsData) => {
       return;
     }
 
-    prismic
+    props.prismic
       .load({ variables: { after: getCursorFromDocumentIndex(page) } })
-      .then(res => setData(res.data));
+      .then(res => {
+        setSiLoading(false);
+        setData(res.data)
+      });
   }, [page]);
 
   return (
     <div>
       <h1>All lists</h1>
-      {prismic.allLists.edges.map(({ node }) => (
-        <div>
-          <Link to={`list/${node._meta.uid}`}>{node.header[0].text}</Link>
-        </div>
+      {isLoading ?
+        <div>loading...</div> :
+        data.allLists.edges.map(({ node }) => (
+          <div>
+            <Link to={`list/${node._meta.uid}`}>{node.header[0].text}</Link>
+          </div>
       ))}
-      <button disabled={page <= 0} onClick={onPreviousClick}>
-        prev page
+      <button disabled={page <= 0} onClick={onPaginationControlClick(false)}>
+        Prev page
       </button>
-      <button disabled={!data.allLists.pageInfo.hasNextPage} onClick={onNextClick}>
-        next page
+      <button disabled={!data.allLists.pageInfo.hasNextPage} onClick={onPaginationControlClick(true)}>
+        Next page
       </button>
     </div>
   );

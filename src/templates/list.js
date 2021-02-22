@@ -32,6 +32,7 @@ export const query = graphql`
           node {
             header
             content
+            image
           }
         }
       }
